@@ -14,12 +14,13 @@
 	<!-- These locate the user data directories for the mozilla applications -->
 	<property name="firefox.datadir" location="${user.home}/Application Data/Mozilla/Firefox"/>
 	<property name="thunderbird.datadir" location="${user.home}/Application Data/Thunderbird"/>
+	<property name="mozilla.datadir" location="${user.home}/Application Data/Mozilla"/>
 	
 	<!-- Sets up the location of the extension source and a place to compile everything to -->
 	<property name="srcdir" location="${basedir}/src"/>
 	<property name="bindir" location="${basedir}/bin"/>
 	
-	<target name="overwrite" depends="build,_overwrite_firefox,_overwrite_thunderbird">
+	<target name="overwrite" depends="build,_overwrite_firefox,_overwrite_thunderbird,_overwrite_mozilla">
 		
 		<!-- Attempts to overwrite an installation of the extension in the firefox and thunderbird profile -->
 		
@@ -47,7 +48,7 @@
 		<delete file="${basedir}/properties.xml"/>
 	</target>
 	
-	<target name="_setup" depends="_extract-props,_setup-firefox,_setup-thunderbird">
+	<target name="_setup" depends="_extract-props,_setup-firefox,_setup-thunderbird,_setup-mozilla">
 		
 		<!-- Sets things up and detects if there is a components directory -->
 		
@@ -92,6 +93,19 @@
 		<echo>Profile directory is ${firefox.profiledir}</echo>
 	</target>
 	
+	<target name="_setup-mozilla" if="extension.targets.mozilla">
+		
+		<!-- Sets up some properties if mozilla is one of the targets of the extension -->
+		
+		<echo>Mozilla extension</echo>
+		<property prefix="mozilla.profile" file="${mozilla.datadir}/profiles.ini"/>
+		<property name="mozilla.profiledir" location="${mozilla.datadir}/${mozilla.profile.Path}"/>
+		<condition property="extension.targets.mozilla.valid" value="true">
+			<available file="${mozilla.profiledir}/extensions/${extension.id}" type="dir"/>
+		</condition>
+		<echo>Profile directory is ${firefox.profiledir}</echo>
+	</target>
+	
 	<target name="_overwrite_firefox" if="extension.targets.firefox.valid">
 
 		<!-- Copies the extension files to the firefox profile -->
@@ -108,6 +122,16 @@
 		
 		<echo>Overwriting installation in Thunderbird</echo>
 		<copy todir="${thunderbird.profiledir}/extensions/${extension.id}">
+			<fileset dir="${bindir}" includes="**/*"/>
+		</copy>
+	</target>
+	
+	<target name="_overwrite_mozilla" if="extension.targets.mozilla.valid">
+
+		<!-- Copies the extension files to the mozilla profile -->
+		
+		<echo>Overwriting installation in Mozilla</echo>
+		<copy todir="${mozilla.profiledir}/extensions/${extension.id}">
 			<fileset dir="${bindir}" includes="**/*"/>
 		</copy>
 	</target>
