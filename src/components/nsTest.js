@@ -1,10 +1,3 @@
-function GetDirectoryFromURI(uri)
-{
-	var rdfservice = Components.classes["@mozilla.org/rdf/rdf-service;1"]. getService(Components.interfaces.nsIRDFService);
-	var directory = rdfservice.GetResource(uri).QueryInterface(Components.interfaces.nsIAbDirectory);
-	return directory;
-}
-
 function TestComponent()
 {
 };
@@ -13,9 +6,6 @@ TestComponent.prototype =
 {
 	startup: function()
 	{
-		/*var en = GetDirectoryFromURI("moz-abmdbdirectory://abook.mab").childCards;
-		en.first();
-		alert((en.currentItem().QueryInterface(Components.interfaces.nsIAbCard)).displayName);		dump(abook.dirName+"\n");*/
 	},
 	
 	// nsIAbListener implementation
@@ -50,8 +40,11 @@ TestComponent.prototype =
 	{
 		if (topic=="app-startup")
 		{
-			dump("TestComponent startup\n");
-			this.startup();
+			dump("TestComponent app-startup\n");
+		}
+		else if (topic=="xpcom-startup")
+		{
+			dump("TestComponent xpcom-startup\n");
 		}
 		else
 		{
@@ -85,7 +78,8 @@ var initModule =
 		compmgr = compmgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
 		compmgr.registerFactoryLocation(this.CID,"Test Component",this.ProgID,filespec,location,type);
 		var catman = Components.classes["@mozilla.org/categorymanager;1"].getService(Components.interfaces.nsICategoryManager);
-		catman.addCategoryEntry("app-startup","Test Component",this.ProgID,true,true);
+		//catman.addCategoryEntry("app-startup","Test Component",this.ProgID,true,true);
+		//catman.addCategoryEntry("xpcom-startup","Test Component",this.ProgID,true,true);
 	},
 	
 	unregisterSelf: function(compmgr, filespec, location)
@@ -93,7 +87,8 @@ var initModule =
 		compmgr = compmgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
 		compmgr.unregisterFactoryLocation(this.CID,filespec);		
 		var catman = Components.classes["@mozilla.org/categorymanager;1"].getService(Components.interfaces.nsICategoryManager);
-		catman.deleteCategoryEntry("app-startup","Test Component",true);
+		//catman.deleteCategoryEntry("app-startup","Test Component",true);
+		//catman.deleteCategoryEntry("xpcom-startup","Test Component",true);
 	},
 
 	getClassObject : function (compMgr, cid, iid)
