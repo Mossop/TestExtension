@@ -5,6 +5,25 @@ function GetDirectoryFromURI(uri)
 	return directory;
 }
 
+function walkFolder(folder)
+{
+	alert(folder.name);
+	if (folder.hasSubFolders)
+	{
+		var subs = folder.GetSubFolders();
+		subs.first();
+		try
+		{
+			while (true)
+			{
+				walkFolder(subs.currentItem().QueryInterface(Components.interfaces.nsIMsgFolder));
+				subs.next();
+			}
+		}
+		catch (e) {}
+	}
+}
+
 function testscript()
 {
 	/*var en = GetDirectoryFromURI("moz-abmdbdirectory://abook.mab").childCards;
@@ -16,6 +35,9 @@ function testscript()
 	for (var i = 0; i<count; i++)
 	{
 		var account=mailmanager.accounts.GetElementAt(i).QueryInterface(Components.interfaces.nsIMsgAccount);
-		alert(account.incomingServer.prettyName);
+		if (account.incomingServer.type=="imap")
+		{
+			walkFolder(account.incomingServer.rootFolder);
+		}
 	}
 }
