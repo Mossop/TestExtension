@@ -11,6 +11,10 @@
 	<!-- These should go elsewhere so they can be machine specific -->
 	<property name="tools.xpidl" location="c:/gecko-sdk/bin/xpidl.exe"/>
 	<property name="tools.xpidl.include" location="c:/gecko-sdk/idl"/>
+
+	<!-- These locate the user data directories for the mozilla applications -->
+	<property name="firefox.datadir" location="${user.home}/Application Data/Mozilla/Firefox"/>
+	<property name="thunderbird.datadir" location="${user.home}/Application Data/Thunderbird"/>
 	
 	<!-- Sets up the location of the extension source and a place to compile everything to -->
 	<property name="srcdir" location="${basedir}/src"/>
@@ -68,9 +72,8 @@
 		<!-- Sets up some properties if thunderbird is one of the targets of the extension -->
 		
 		<echo>Thunderbird extension</echo>
-		<property name="thunderbird.appdir" location="${user.home}/Application Data/Thunderbird"/>
-		<property prefix="thunderbird.profile" file="${thunderbird.appdir}/profiles.ini"/>
-		<property name="thunderbird.profiledir" location="${thunderbird.appdir}/${thunderbird.profile.Path}"/>
+		<property prefix="thunderbird.profile" file="${thunderbird.datadir}/profiles.ini"/>
+		<property name="thunderbird.profiledir" location="${thunderbird.datadir}/${thunderbird.profile.Path}"/>
 		<condition property="extension.targets.thunderbird.valid" value="true">
 			<available file="${thunderbird.profiledir}/extensions/${extension.id}" type="dir"/>
 		</condition>
@@ -82,9 +85,8 @@
 		<!-- Sets up some properties if firefox is one of the targets of the extension -->
 		
 		<echo>Firefox extension</echo>
-		<property name="firefox.appdir" location="${user.home}/Application Data/Mozilla/Firefox"/>
-		<property prefix="firefox.profile" file="${firefox.appdir}/profiles.ini"/>
-		<property name="firefox.profiledir" location="${firefox.appdir}/${firefox.profile.Path}"/>
+		<property prefix="firefox.profile" file="${firefox.datadir}/profiles.ini"/>
+		<property name="firefox.profiledir" location="${firefox.datadir}/${firefox.profile.Path}"/>
 		<condition property="extension.targets.firefox.valid" value="true">
 			<available file="${firefox.profiledir}/extensions/${extension.id}" type="dir"/>
 		</condition>
