@@ -35,6 +35,14 @@
 			
 		<copy file="${srcdir}/install.rdf" todir="${bindir}"/>
 	</target>
+
+	<target name="clean">
+		
+		<!-- Deletes all intermediate files -->
+			
+		<delete dir="${bindir}"/>
+		<delete file="${basedir}/properties.xml"/>
+	</target>
 	
 	<target name="_setup" depends="_extract-props,_setup-firefox,_setup-thunderbird">
 		
