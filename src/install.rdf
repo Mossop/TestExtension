@@ -20,6 +20,12 @@
 		<em:description>A test extension</em:description>
 		<em:creator>Dave Townsend</em:creator>
 
+		<em:file>
+			<Description about="urn:mozilla:extension:file:TestExtension.jar">
+				<em:package>content/</em:package>
+			</Description>
+		</em:file>
+		
 	</Description>      
 
 </RDF>

@@ -1,17 +1,8 @@
-function dumpInfo(item)
+function GetDirectoryFromURI(uri)
 {
-	if (item instanceof Components.interfaces.nsIRDFResource)
-	{
-		dump("Resource: "+item.Value+"\n");
-	}
-	else if (item instanceof Components.interfaces.nsIAbDirectory)
-	{
-		dump("AbDirectory: "+item.Value+"\n");
-	}
-	else if (item instanceof Components.interfaces.nsIAbCard)
-	{
-		dump("AbCard\n");
-	}
+	var rdfservice = Components.classes["@mozilla.org/rdf/rdf-service;1"]. getService(Components.interfaces.nsIRDFService);
+	var directory = rdfservice.GetResource(uri).QueryInterface(Components.interfaces.nsIAbDirectory);
+	return directory;
 }
 
 function TestComponent()
@@ -22,25 +13,9 @@ TestComponent.prototype =
 {
 	startup: function()
 	{
-		var session = Components.classes["@mozilla.org/addressbook/services/session;1"].getService(Components.interfaces.nsIAddrBookSession);
-		session.addAddressBookListener(this,Components.interfaces.nsIAbListener.all);
-		
-		var rdfservice = Components.classes["@mozilla.org/rdf/rdf-service;1"]. getService(Components.interfaces.nsIRDFService);
-		var abook = rdfservice.GetResource("moz-abmdbdirectory://abook.mab").QueryInterface(Components.interfaces.nsIAbDirectory);
-
-		dump(abook.dirName+"\n");
-		dump(abook.description+"\n");
-		dump(abook.listNickName+"\n");
-		dump(abook.fileName+"\n");
-		dump(abook.Value+"\n");
-		dump(abook.QueryInterface(Components.interfaces.nsIClassInfo).classID+"\n");
-		
-		var elems = abook.childNodes;
-		while (elems.hasMoreElements())
-		{
-			var card = elems.getNext().QueryInterface(Components.interfaces.nsIAbCard);
-			dump(card.displayName+"\n");
-		}
+		/*var en = GetDirectoryFromURI("moz-abmdbdirectory://abook.mab").childCards;
+		en.first();
+		alert((en.currentItem().QueryInterface(Components.interfaces.nsIAbCard)).displayName);		dump(abook.dirName+"\n");*/
 	},
 	
 	// nsIAbListener implementation

@@ -136,7 +136,8 @@
 		<!-- Jars up the chrome folders into the build dir -->
 		
 		<mkdir dir="${bindir}/chrome"/>
-		<jar basedir="${srcdir}/chrome" includes="${extension.chrome.files}" destfile="${bindir}/chrome/${extension.chrome.jarname}">
+		<delete file="${bindir}/chrome/${extension.chrome.jarname}"/>
+		<jar basedir="${srcdir}/chrome" compress="false" includes="${extension.chrome.files}" destfile="${bindir}/chrome/${extension.chrome.jarname}">
 		</jar>
 	</target>
 
