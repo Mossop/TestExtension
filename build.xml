@@ -8,9 +8,8 @@
 		files are stored in the basedir.
 	</description>
 	
-	<!-- These should go elsewhere so they can be machine specific -->
-	<property name="tools.xpidl" location="c:/gecko-sdk/bin/xpidl.exe"/>
-	<property name="tools.xpidl.include" location="c:/gecko-sdk/idl"/>
+	<!-- Load properties specific to the user -->
+	<property prefix="localsetup" file="${user.home}/localsetup.properties"/>
 
 	<!-- These locate the user data directories for the mozilla applications -->
 	<property name="firefox.datadir" location="${user.home}/Application Data/Mozilla/Firefox"/>
@@ -121,11 +120,11 @@
 		<copy todir="${bindir}/components">
 			<fileset dir="${srcdir}/components" includes="*.js"/>
 		</copy>
-		<apply executable="${tools.xpidl}" dir="${bindir}/components" dest="${bindir}/components">
+		<apply executable="${localsetup.tools.xpidl}" dir="${bindir}/components" dest="${bindir}/components">
 			<arg value="-m"/>
 			<arg value="typelib"/>
 			<arg value="-I"/>
-			<arg value="${tools.xpidl.include}"/>
+			<arg value="${localsetup.tools.xpidl.include}"/>
 			<arg value="-w"/>
 			<fileset dir="${srcdir}/components" includes="*.idl"/>
 			<mapper type="glob" from="*.idl" to="*.xpt"/>
