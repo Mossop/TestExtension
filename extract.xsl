@@ -11,9 +11,12 @@
 <xsl:template match="/rdf:RDF/rdf:Description[@about=&quot;urn:mozilla:install-manifest&quot;]">
 	<root>
 		<extension>
-			<uid><xsl:value-of select="em:id"/></uid>
+			<id><xsl:value-of select="em:id"/></id>
 			<version><xsl:value-of select="em:version"/></version>
-			<xsl:apply-templates select="em:targetApplication/rdf:Description"/>
+			<targets>
+				<xsl:apply-templates select="em:targetApplication/rdf:Description"/>
+			</targets>
+			<xsl:apply-templates select="em:file/rdf:Description"/>
 		</extension>
 	</root>
 </xsl:template>
@@ -21,12 +24,23 @@
 <xsl:template match="em:targetApplication/rdf:Description">
 	<xsl:choose>
 		<xsl:when test="em:id=$firefox-uid">
-			<target>firefox</target>
+			<firefox>true</firefox>
 		</xsl:when>
 		<xsl:when test="em:id=$thunderbird-uid">
-			<target>thunderbird</target>
+			<thunderbird>true</thunderbird>
 		</xsl:when>
 	</xsl:choose>
+</xsl:template>
+
+<xsl:template match="em:file/rdf:Description">
+	<chrome>
+		<jarname><xsl:value-of select="substring-after(@about,'urn:mozilla:extension:file:')"/></jarname>
+		<files><xsl:apply-templates select="em:package|em:locale|em:skin"/></files>
+	</chrome>
+</xsl:template>
+
+<xsl:template match="em:package|em:locale|em:skin">
+	<xsl:value-of select="."/><xsl:text>*,</xsl:text>
 </xsl:template>
 
 </xsl:stylesheet>
