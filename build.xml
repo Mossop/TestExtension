@@ -2,47 +2,59 @@
 	
 	<property name="srcdir" location="${basedir}/src"/>
 	<property name="bindir" location="${basedir}/bin"/>
-	<property name="thunderbird" value="true"/>
 	
-	<target name="setup" depends="setup-firefox,setup-thunderbird">
+	<target name="_setup" depends="_extract-props,_setup-firefox,_setup-thunderbird">
 		<condition property="chrome-exists" value="true">
 			<available file="${srcdir}/chrome" type="dir"/>
 		</condition>
 		<condition property="components-exists" value="true">
 			<available file="${srcdir}/components" type="dir"/>
 		</condition>
+		<property prefix="profile" file="${appdir}/profiles.ini"/>
+		<property name="profiledir" location="${appdir}/${profile.Path}"/>
 		<mkdir dir="${bindir}"/>
 	</target>
 
-	<target name="setup-thunderbird" if="thunderbird">
-		<echo>Thunderbird extension</echo>
-		<property name="appdir" location="${user.home}/Application Data/Thunderbird/Profiles"/>
+	<target name="_extract-props">
+		<xslt style="${basedir}/extract.xsl" in="${srcdir}/install.rdf" out="${basedir}/properties.xml"/>
+		<xmlproperty file="${basedir}/properties.xml" keepRoot="false"/>
+		<condition property="firefox" value="true">
+			<equals arg1="${extension.target}" arg2="firefox"/>
+		</condition>
+		<condition property="thunderbird" value="true">
+			<equals arg1="${extension.target}" arg2="thunderbird"/>
+		</condition>
 	</target>
 	
-	<target name="setup-firefox" if="firefox">
+	<target name="_setup-thunderbird" if="thunderbird">
+		<echo>Thunderbird extension</echo>
+		<property name="appdir" location="${user.home}/Application Data/Thunderbird"/>
+	</target>
+	
+	<target name="_setup-firefox" if="firefox">
 		<echo>Firefox extension</echo>
-		<property name="appdir" location="${user.home}/Application Data/Mozilla/Firefox/Profiles"/>
+		<property name="appdir" location="${user.home}/Application Data/Mozilla/Firefox"/>
 	</target>
 	
 	<target name="overwrite" depends="build">
 	</target>
 	
 	<target name="package" depends="build">
-		<zip basedir="${bindir}" destfile="${basedir}/${ant.project.name}.xpi"/>
+		<zip basedir="${bindir}" destfile="${basedir}/${ant.project.name}-${extension.version}.xpi"/>
 	</target>
 
-	<target name="build" depends="setup,buildcomponents,buildchrome">
+	<target name="build" depends="_setup,_buildcomponents,_buildchrome">
 		<copy file="${srcdir}/install.rdf" todir="${bindir}"/>
 	</target>
 	
-	<target name="buildcomponents" if="components-exists">
+	<target name="_buildcomponents" if="components-exists">
 		<mkdir dir="${bindir}/components"/>
 		<copy todir="${bindir}/components">
 			<FileSet dir="${srcdir}/components" includes="*.js"/>
 		</copy>
 	</target>
 	
-	<target name="buildchrome" if="chrome-exists">
+	<target name="_buildchrome" if="chrome-exists">
 		<mkdir dir="${bindir}/chrome"/>
 		<jar basedir="${srcdir}/chrome" destfile="${bindir}/chrome/${ant.project.name}.jar"/>
 	</target>
