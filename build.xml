@@ -1,0 +1,50 @@
+<project name="TestExtension" default="package">
+	
+	<property name="srcdir" location="${basedir}/src"/>
+	<property name="bindir" location="${basedir}/bin"/>
+	<property name="thunderbird" value="true"/>
+	
+	<target name="setup" depends="setup-firefox,setup-thunderbird">
+		<condition property="chrome-exists" value="true">
+			<available file="${srcdir}/chrome" type="dir"/>
+		</condition>
+		<condition property="components-exists" value="true">
+			<available file="${srcdir}/components" type="dir"/>
+		</condition>
+		<mkdir dir="${bindir}"/>
+	</target>
+
+	<target name="setup-thunderbird" if="thunderbird">
+		<echo>Thunderbird extension</echo>
+		<property name="appdir" location="${user.home}/Application Data/Thunderbird/Profiles"/>
+	</target>
+	
+	<target name="setup-firefox" if="firefox">
+		<echo>Firefox extension</echo>
+		<property name="appdir" location="${user.home}/Application Data/Mozilla/Firefox/Profiles"/>
+	</target>
+	
+	<target name="overwrite" depends="build">
+	</target>
+	
+	<target name="package" depends="build">
+		<zip basedir="${bindir}" destfile="${basedir}/${ant.project.name}.xpi"/>
+	</target>
+
+	<target name="build" depends="setup,buildcomponents,buildchrome">
+		<copy file="${srcdir}/install.rdf" todir="${bindir}"/>
+	</target>
+	
+	<target name="buildcomponents" if="components-exists">
+		<mkdir dir="${bindir}/components"/>
+		<copy todir="${bindir}/components">
+			<FileSet dir="${srcdir}/components" includes="*.js"/>
+		</copy>
+	</target>
+	
+	<target name="buildchrome" if="chrome-exists">
+		<mkdir dir="${bindir}/chrome"/>
+		<jar basedir="${srcdir}/chrome" destfile="${bindir}/chrome/${ant.project.name}.jar"/>
+	</target>
+
+</project>
